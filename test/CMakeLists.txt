@@ -1,9 +1,16 @@
+declare_PID_Component(TEST_APPLICATION NAME test-rtplot DIRECTORY test_rtplot)
 
-#declare your tests here
-# declare_PID_Component			(TEST_APPLICATION 	NAME  <test unit 1>	DIRECTORY <A DIR>) 
-# declare_PID_Component			(TEST_APPLICATION 	NAME  <test unit 2>	DIRECTORY <ANOTHER DIR>) 
+declare_PID_Component_Dependency(
+	COMPONENT test-rtplot
+	NATIVE rtplot)
 
+declare_PID_Component_Dependency(
+	COMPONENT test-rtplot
+	NATIVE rpathlib
+	PACKAGE pid-rpath)
 
-#run_PID_Test (NAME checking-xxx COMPONENT <test unit 1> ARGUMENTS ...)
-#run_PID_Test (NAME checking-xxx COMPONENT <test unit 2> ARGUMENTS ...)
+#run_PID_Test(
+#	NAME sine-plot
+#	COMPONENT test-rtplot
+#	ARGUMENTS "rtsine")
 

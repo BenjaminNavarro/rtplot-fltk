@@ -14,6 +14,15 @@ declare_PID_Package(	AUTHOR 		idhuser
 set_PID_Package_Version(0 1)
 
 #now finding packages
+find_Package(fltk-gui 0.3.0 REQUIRED)
+declare_PID_Package_Dependency(
+	PACKAGE fltk-gui
+	NATIVE VERSION 0.3)
+
+find_package (pid-rpath 1.0 REQUIRED)
+declare_PID_Package_Dependency(
+	PACKAGE pid-rpath 
+	NATIVE VERSION 1.0)
 
 build_PID_Package()
 
