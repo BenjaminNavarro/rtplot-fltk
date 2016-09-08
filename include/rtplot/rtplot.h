@@ -16,6 +16,7 @@ class RTPlot
 {
 public:
 	RTPlot(int argc, char* argv[]);
+	RTPlot();
 	~RTPlot();
 
 	void newPoint(int curve, float x, float y);
@@ -32,6 +33,7 @@ public:
 	void autoYRange();
 
 private:
+	void create();
 	Fl_Window* window_;
 
 	InputParserThread* parser_;

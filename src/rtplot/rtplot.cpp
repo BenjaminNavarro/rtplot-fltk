@@ -10,11 +10,29 @@ const int _plot_y_offset = 15;
 const int _plot_x_size = 555;
 const int _plot_y_size = 380;
 
+RTPlot::RTPlot() :
+	auto_refresh_period_(0),
+	auto_x_range(true),
+	auto_y_range(true)
+{
+	create();
+	window_->size_range(655, 450, 0, 0, 0, 0, 1);
+}
+
 RTPlot::RTPlot(int argc, char* argv[]) :
 	auto_refresh_period_(0),
 	auto_x_range(true),
 	auto_y_range(true)
 {
+	create();
+	window_->show(argc, argv);
+}
+
+RTPlot::~RTPlot()
+{
+}
+
+void RTPlot::create() {
 
 	window_ = new Fl_Window(655, 450, "RTPlot");
 
@@ -27,11 +45,6 @@ RTPlot::RTPlot(int argc, char* argv[]) :
 	Fl::scheme("plastic"); // Better looking GUI
 	// window_->size_range(window_->w(), window_->h());
 	window_->size_range(655, 450, 0, 0, 0, 0, 1);
-	window_->show(argc, argv);
-}
-
-RTPlot::~RTPlot()
-{
 }
 
 void RTPlot::quit() {
@@ -82,11 +95,11 @@ void RTPlot::autoRefresh(bool enable, uint period_ms) {
 
 		if(create_thread) {
 			auto_refresh_thread_ = thread([this]() {
-				while(auto_refresh_period_) {
-				    this->refresh();
-				    this_thread::sleep_for(std::chrono::milliseconds(auto_refresh_period_));
-				}
-			});
+			                                  while(auto_refresh_period_) {
+			                                      this->refresh();
+			                                      this_thread::sleep_for(std::chrono::milliseconds(auto_refresh_period_));
+											  }
+										  });
 		}
 	}
 	else {
