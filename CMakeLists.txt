@@ -5,10 +5,14 @@ include(Package_Definition NO_POLICY_SCOPE)
 
 PROJECT(rtplot-fltk)
 
-declare_PID_Package(	AUTHOR 		idhuser 
+declare_PID_Package(	
+			AUTHOR 		Benjamin Navarro
+			INSTITUTION	LIRMM
+			MAIL		navarro@lirmm.fr
+			ADDRESS 	git@gite.lirmm.fr:pid_external_deps/rtplot-fltk.git	
 			YEAR 		2016 
 			LICENSE 	CeCILL
-			DESCRIPTION 	TODO: input a short description of package rtplot-fltk utility here
+			DESCRIPTION Real time plotting library and application based on FLTK
 		)
 
 set_PID_Package_Version(0 1)
