@@ -1,13 +1,12 @@
 #include <rtplot.h>
 
+#include <FL/Fl.H>
+
 int main(int argc, char *argv[])
 {
-	Fl::lock();
-	XInitThreads();
-
-    RTPlot plot(argc, argv);
+	RTPlot plot;
 
 	Fl::run();
 
-    return 0;
+	return 0;
 }
