@@ -2,7 +2,7 @@
 Overview   {#mainpage}
 =========
 
-TODO:;input;a;short;description;of;package;rtplot-fltk;utility;here
+Real time plotting library and application based on FLTK
 
 The license that appies to the whole package content is **CeCILL**. For more information about license please read the [wiki][package_wiki] of this package.
 
@@ -19,9 +19,9 @@ About authors
 =====================
 
 rtplot-fltk has been developped by following authors: 
-+ idhuser ()
++ Benjamin Navarro (LIRMM)
 
-Please contact idhuser -  for more information or questions.
+Please contact Benjamin Navarro (navarro@lirmm.fr) - LIRMM for more information or questions.
 
 
 
