@@ -15,7 +15,7 @@ declare_PID_Package(
 			DESCRIPTION 	"Real time plotting library and application based on FLTK"
 		)
 
-set_PID_Package_Version(0 1 1)
+set_PID_Package_Version(0 2 0)
 
 check_All_PID_Default_Platforms()
 
