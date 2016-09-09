@@ -9,18 +9,18 @@ declare_PID_Package(
 			AUTHOR 		Benjamin Navarro
 			INSTITUTION	LIRMM
 			MAIL		navarro@lirmm.fr
-			ADDRESS 	git@gite.lirmm.fr:pid_external_deps/rtplot-fltk.git	
+			ADDRESS 	git@gite.lirmm.fr:pid/rtplot-fltk.git
 			YEAR 		2016 
 			LICENSE 	CeCILL
-			DESCRIPTION Real time plotting library and application based on FLTK
+			DESCRIPTION 	"Real time plotting library and application based on FLTK"
 		)
 
-set_PID_Package_Version(0 2 0)
+set_PID_Package_Version(0 1 1)
 
 check_All_PID_Default_Platforms()
 
 #now finding packages
-find_Package(fltk-gui 0.3.0 REQUIRED)
+find_Package(fltk-gui 0.3.1 REQUIRED)
 declare_PID_Package_Dependency(
 	PACKAGE fltk-gui
 	NATIVE VERSION 0.3)
