@@ -1,22 +1,13 @@
 #ifndef RTPLOT_H
 #define RTPLOT_H
 
-#include "inputparserthread.h"
-
 #include <string>
-#include <thread>
-#include <mutex>
-
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-
-#include "Fl_plot.H"
 
 class RTPlot
 {
 public:
-	RTPlot(int argc, char* argv[]);
-	RTPlot();
+	RTPlot(int argc, char* argv[], bool start_stdin_parser = true);
+	RTPlot(bool start_stdin_parser = true);
 	~RTPlot();
 
 	void newPoint(int curve, float x, float y);
@@ -33,16 +24,10 @@ public:
 	void autoYRange();
 
 private:
-	void create();
-	Fl_Window* window_;
+	void create(bool start_stdin_parser);
 
-	InputParserThread* parser_;
-	std::thread auto_refresh_thread_;
-	std::mutex auto_refresh_period_lock_;
-	unsigned int auto_refresh_period_;
-	Fl_Plot* plot_;
-	bool auto_x_range, auto_y_range;
-	uint color_index;
+	struct rtplot_members;
+	rtplot_members* impl_;
 };
 
 #endif // RTPLOT_H

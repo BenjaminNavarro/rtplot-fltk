@@ -110,8 +110,10 @@ void Fl_Plot::draw() {
 	curves_lock_.unlock();
 	fl_pop_clip();
 
-	fl_color(FL_BLACK);
-	fl_draw(cursor_coordinates_.c_str(), 10, parent()->h()-10);
+	if(display_cursor_coordinates_) {
+		fl_color(FL_BLACK);
+		fl_draw(cursor_coordinates_.c_str(), 10, parent()->h()-10);
+	}
 
 	fl_color(init_color);
 }
@@ -123,8 +125,8 @@ void Fl_Plot::drawAxes() {
 	fl_color(FL_BLACK);
 	fl_draw("", 0, 0); // Needed to draw rotated text, don't know why. Maybe a bug....
 	int textw=0, texth=0;
-	// fl_measure(ylabel_.c_str(), textw, texth);
-	// fl_draw(90, ylabel_.c_str(), 10+texth/2, (plot_offset_.second+plot_size_.second+textw)/2);
+	fl_measure(ylabel_.c_str(), textw, texth);
+	fl_draw(90, ylabel_.c_str(), 10+texth/2, (plot_offset_.second+plot_size_.second+textw)/2);
 
 	textw = texth = 0;
 	fl_measure(xlabel_.c_str(), textw, texth);
@@ -149,7 +151,7 @@ void Fl_Plot::drawAxes() {
 		ystart = yend = plot_offset_.second + plot_size_.second;
 
 		if(i%4)
-			yend -= 3; // small tick
+			yend -= 3;  // small tick
 		else {
 			yend -= 6; // big tick
 			// Verical dashed gray line
@@ -169,7 +171,7 @@ void Fl_Plot::drawAxes() {
 		ystart = yend = plot_offset_.second + plot_size_.second - i*ytick;
 
 		if(i%4)
-			xend += 3; // small tick
+			xend += 3;  // small tick
 		else {
 			xend += 6; // big tick
 			// Horizontal dashed gray line
@@ -353,6 +355,8 @@ void Fl_Plot::toggleLabels() {
 	toggle_labels_ = true;
 }
 
+
+
 void Fl_Plot::refresh() {
 	redraw();
 	Fl::check();
@@ -373,30 +377,25 @@ void Fl_Plot::setXLabel(const std::string& label) {
 }
 
 void Fl_Plot::setYLabel(const std::string& label) {
-	// ylabel_ = label;
+	ylabel_ = label;
 }
 
 void Fl_Plot::setCurveLabel(int curve, const std::string& label) {
 	labels_[curve] = label;
 }
 
-namespace {
-Paird _current_xrange, _current_yrange;
-float _current_xscale, _current_yscale;
-}
-
 void Fl_Plot::initScaleToPlot() {
-	_current_xrange = auto_xrange_ ? xrange_auto_ : xrange_;
-	_current_yrange = auto_yrange_ ? yrange_auto_ : yrange_;
+	current_xrange_ = auto_xrange_ ? xrange_auto_ : xrange_;
+	current_yrange_ = auto_yrange_ ? yrange_auto_ : yrange_;
 
-	_current_xscale = plot_size_.first/(_current_xrange.second - _current_xrange.first);
-	_current_yscale = plot_size_.second/(_current_yrange.first - _current_yrange.second);
+	current_xscale_ = plot_size_.first/(current_xrange_.second - current_xrange_.first);
+	current_yscale_ = plot_size_.second/(current_yrange_.first - current_yrange_.second);
 
 }
 
 void Fl_Plot::scaleToPlot(const PointXY& in_point, PointXY& out_point) {
-	out_point.first = plot_offset_.first + _current_xscale*(in_point.first - _current_xrange.first);
-	out_point.second = plot_offset_.second + _current_yscale*(in_point.second - _current_yrange.second);
+	out_point.first = plot_offset_.first + current_xscale_*(in_point.first - current_xrange_.first);
+	out_point.second = plot_offset_.second + current_yscale_*(in_point.second - current_yrange_.second);
 }
 
 PointXY Fl_Plot::scaleToGraph(const PointXY& point) {

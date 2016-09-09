@@ -74,12 +74,16 @@ private:
 	int label_area_width_;
 	int subdivisions_;
 	std::string xlabel_;
+	std::string ylabel_;
 	std::string cursor_coordinates_;
 	bool auto_xrange_;
 	bool auto_yrange_;
 	bool display_labels_;
 	bool toggle_labels_;
 	bool display_cursor_coordinates_;
+
+	Paird current_xrange_, current_yrange_;
+	float current_xscale_, current_yscale_;
 
 	Fl_Button* display_labels_btn_;
 	std::string display_labels_btn_text_;
