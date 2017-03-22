@@ -2,7 +2,7 @@
 Overview
 =========
 
-Real;time;plotting;library;and;application;based;on;FLTK
+Real time plotting library and application based on FLTK
 
 The license that applies to the whole package content is **CeCILL**. Please look at the license.txt file at the root of this repository.
 

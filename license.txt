@@ -1,7 +1,7 @@
 
 Software license for the software named : rtplot-fltk
 
-Software description : RealtimeplottinglibraryandapplicationbasedonFLTK
+Software description : Real time plotting library and application based on FLTK
 
 Copyright (C) 2016  Benjamin Navarro (LIRMM)
 
