@@ -17,8 +17,6 @@ declare_PID_Package(
 
 set_PID_Package_Version(0 2 0)
 
-check_All_PID_Default_Platforms()
-
 #now finding packages
 find_Package(fltk-gui 0.3.0 REQUIRED)
 declare_PID_Package_Dependency(

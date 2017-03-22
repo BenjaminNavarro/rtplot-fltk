@@ -1,8 +1,9 @@
 
 Software license for the software named : rtplot-fltk
 
-Software description : TODO:inputashortdescriptionofpackagertplot-fltkutilityhere
-Copyright (C) 2016  idhuser ()
+Software description : RealtimeplottinglibraryandapplicationbasedonFLTK
+
+Copyright (C) 2016  Benjamin Navarro (LIRMM)
 
 This software is free software: you can redistribute it and/or modify it under the terms of the CeCILL license as published by
  the CEA CNRS INRIA, either version 2.1 of the License, or (at your option) any later version. This software 
@@ -10,10 +11,15 @@ is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY with
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 
 Information about license applying to this software:
+
 License : CeCILL
+
 Official name of the license : Contrat de license de logiciel libre CeCILL 
+
 Version of the license : 2.1
+
 License authors : the CEA CNRS INRIA
+
 Additionnal information can be found on the official website of the CeCILL licenses family (http://www.cecill.info/index.en.html)
 
 Legal terms of the license are reproduced below (french and english versions are provided):
