@@ -15,7 +15,7 @@ declare_PID_Package(
 			DESCRIPTION 	"Real time plotting library and application based on FLTK"
 		)
 
-set_PID_Package_Version(0 2 0)
+set_PID_Package_Version(0 3 0)
 
 #now finding packages
 find_Package(fltk-gui 0.4 REQUIRED)
