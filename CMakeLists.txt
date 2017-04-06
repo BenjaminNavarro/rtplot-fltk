@@ -18,15 +18,15 @@ declare_PID_Package(
 set_PID_Package_Version(0 2 0)
 
 #now finding packages
-find_Package(fltk-gui 0.3.1 REQUIRED)
+find_Package(fltk-gui 0.4 REQUIRED)
 declare_PID_Package_Dependency(
 	PACKAGE fltk-gui
-	NATIVE VERSION 0.3)
+	NATIVE VERSION 0.4)
 
-find_package (pid-rpath 1.0 REQUIRED)
+find_package (pid-rpath 2.0 REQUIRED)
 declare_PID_Package_Dependency(
 	PACKAGE pid-rpath 
-	NATIVE VERSION 1.0)
+	NATIVE VERSION 2.0)
 
 build_PID_Package()
 
