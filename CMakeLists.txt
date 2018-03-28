@@ -17,7 +17,7 @@ declare_PID_Package(
 
 
 add_PID_Package_Author(AUTHOR Robin Passama INSTITUTION LIRMM) #debugging and adapting to PID API changes
-set_PID_Package_Version(0 2 2)
+set_PID_Package_Version(0 3 0)
 
 #now finding packages
 declare_PID_Package_Dependency(PACKAGE fltk-gui NATIVE VERSION 0.4.1)
