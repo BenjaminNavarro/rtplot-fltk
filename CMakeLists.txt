@@ -12,7 +12,7 @@ declare_PID_Package(
 			ADDRESS 	git@gite.lirmm.fr:pid/rtplot-fltk.git
 			YEAR 		2016
 			LICENSE 	CeCILL
-			DESCRIPTION 	"Real time plotting library and application based on FLTK"
+			DESCRIPTION "Real time plotting library and application based on FLTK"
 		)
 
 
@@ -21,6 +21,5 @@ set_PID_Package_Version(0 2 2)
 
 #now finding packages
 declare_PID_Package_Dependency(PACKAGE fltk-gui NATIVE VERSION 0.4.1)
-declare_PID_Package_Dependency(PACKAGE pid-rpath NATIVE VERSION 2.0)
 
 build_PID_Package()

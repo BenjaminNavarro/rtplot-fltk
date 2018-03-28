@@ -75,7 +75,7 @@ private:
 	int subdivisions_;
 	std::string xlabel_;
 	std::string ylabel_;
-	std::string cursor_coordinates_;
+	std::pair<size_t, size_t> last_cursor_position_;
 	bool auto_xrange_;
 	bool auto_yrange_;
 	bool display_labels_;
