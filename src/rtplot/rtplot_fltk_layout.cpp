@@ -1,8 +1,10 @@
-#include "rtplot_layout.h"
-#include <rtplot/Fl_Plot.H>
+#include "rtplot_fltk_layout.h"
+#include <rtplot/rtplot_core.h>
 #include <cassert>
 
-RTPlotLayout::RTPlotLayout(int x, int y, int w, int h, const char *l) : Fl_Table(x,y,w,h,l) {
+using namespace rtp;
+
+RTPlotFLTKLayout::RTPlotFLTKLayout(int x, int y, int w, int h, const char *l) : Fl_Table(x,y,w,h,l), RTPlotLayout() {
 	col_header(0);
 	col_resize(1);
 	col_header_height(0);
@@ -13,9 +15,9 @@ RTPlotLayout::RTPlotLayout(int x, int y, int w, int h, const char *l) : Fl_Table
 	end();
 }
 
-RTPlotLayout::~RTPlotLayout() = default;
+RTPlotFLTKLayout::~RTPlotFLTKLayout() = default;
 
-void RTPlotLayout::setSize(std::vector<std::shared_ptr<Fl_Plot>> widgets, size_t num_rows, size_t num_cols) {
+void RTPlotFLTKLayout::setPlots(std::vector<std::shared_ptr<RTPlotCore>> widgets, size_t num_rows, size_t num_cols) {
 	assert(widgets.size() <= num_rows * num_cols);
 	clear();        // clear any previous widgets, if any
 	rows(num_rows);
@@ -30,7 +32,8 @@ void RTPlotLayout::setSize(std::vector<std::shared_ptr<Fl_Plot>> widgets, size_t
 	for(auto widget: widgets) {
 		if(static_cast<bool>(widget)) {
 			find_cell(CONTEXT_TABLE, row, col, X, Y, W, H);
-			widget->resize(X,Y,W,H);
+			widget->setPosition(RTPlotCore::PointXY{X,Y});
+			widget->setSize(RTPlotCore::Pairf{W,H});
 		}
 
 		if(col < num_cols - 1) {
@@ -44,8 +47,8 @@ void RTPlotLayout::setSize(std::vector<std::shared_ptr<Fl_Plot>> widgets, size_t
 	end();
 }
 
-void RTPlotLayout::draw_cell(TableContext context,
-                             int R, int C, int X, int Y, int W, int H) {
+void RTPlotFLTKLayout::draw_cell(TableContext context,
+                                 int R, int C, int X, int Y, int W, int H) {
 	switch ( context ) {
 	case CONTEXT_RC_RESIZE: {
 		int X, Y, W, H;
@@ -66,6 +69,6 @@ void RTPlotLayout::draw_cell(TableContext context,
 	}
 }
 
-void RTPlotLayout::draw() {
+void RTPlotFLTKLayout::draw() {
 	color(FL_WHITE);
 }

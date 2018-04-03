@@ -1,8 +1,5 @@
-#include <rtplot/rtplot.h>
-#include <FL/Fl.H>
+#include <rtplot/rtplot_fltk.h>
 
-#include <vector>
-#include <cassert>
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -10,11 +7,10 @@
 #include <unistd.h>
 #include <chrono>
 
-
 int main(int argc, char const *argv[]) {
-	RTPlot rtplot;
+	rtp::RTPlotFLTK rtplot;
 
-	rtplot.autoRefresh(true, 50);
+	rtplot.enableAutoRefresh(50);
 	rtplot.setGridSize(2, 2);
 
 	for (size_t i = 0; i < 4; ++i) {
@@ -34,15 +30,15 @@ int main(int argc, char const *argv[]) {
 	for (size_t i = 0; i < 6; i++) {
 		std::ostringstream name;
 		name << "Sine " << std::setprecision(3) << freq[i] << " " << amp[i] << " " << offset[i];
-		rtplot.setCurveName(0, i, name.str());
+		rtplot.setCurveLabel(0, i, name.str());
 		rtplot.setXLabel(0, "Time (s)");
 		rtplot.setYLabel(0, "Amplitude");
-		rtplot.setCurveName(3, i, name.str());
+		rtplot.setCurveLabel(3, i, name.str());
 		rtplot.setXLabel(3, "Time (s)");
 		rtplot.setYLabel(3, "Amplitude");
 	}
-	rtplot.setCurveName(1, 0, "line");
-	rtplot.setCurveName(2, 0, "line");
+	rtplot.setCurveLabel(1, 0, "line");
+	rtplot.setCurveLabel(2, 0, "line");
 
 	for(size_t i=0; i<4; ++i) {
 		rtplot.autoXRange(i);
@@ -59,19 +55,19 @@ int main(int argc, char const *argv[]) {
 		i > points/2 ? amplitude -= 1.f : amplitude += 1.f;
 
 		for (size_t c = 0; c < 6; c++) {
-			rtplot.newPoint(0, c, x, sine_wave(x, amp[c], freq[c], offset[c]));
-			rtplot.newPoint(3, c, x, sine_wave(x, amp[c], freq[c], offset[c]));
+			rtplot.addPoint(0, c, x, sine_wave(x, amp[c], freq[c], offset[c]));
+			rtplot.addPoint(3, c, x, sine_wave(x, amp[c], freq[c], offset[c]));
 		}
 
 		{
 			using namespace std;
 			using namespace std::chrono;
 			high_resolution_clock::time_point t1 = high_resolution_clock::now();
-			rtplot.newPoint(1, 0, i, i);
+			rtplot.addPoint(1, 0, i, i);
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
 			total_duration += duration_cast<nanoseconds>( t2 - t1 ).count();
 		}
-		rtplot.newPoint(2, 0, i, i);
+		rtplot.addPoint(2, 0, i, i);
 
 		usleep(1000);
 	}

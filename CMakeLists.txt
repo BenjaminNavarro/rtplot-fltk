@@ -20,6 +20,7 @@ add_PID_Package_Author(AUTHOR Robin Passama INSTITUTION LIRMM) #debugging and ad
 set_PID_Package_Version(0 3 0)
 
 #now finding packages
+declare_PID_Package_Dependency(PACKAGE rtplot-core NATIVE VERSION 0.1)
 declare_PID_Package_Dependency(PACKAGE fltk-gui NATIVE VERSION 0.4.1)
 
 build_PID_Package()
