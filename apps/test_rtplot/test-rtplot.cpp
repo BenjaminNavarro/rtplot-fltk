@@ -1,37 +1,29 @@
-#include <rtplot.h>
-
+#include <rtplot/rtplot.h>
 #include <FL/Fl.H>
 
+#include <vector>
+#include <cassert>
 #include <iostream>
-#include <unistd.h>
 #include <cmath>
-#include <string.h>
 #include <sstream>
 #include <iomanip>
-#include <X11/Xlib.h>
+#include <unistd.h>
+#include <chrono>
 
-using namespace std;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char const *argv[]) {
+	RTPlot rtplot;
 
-	RTPlot plot(false);
-	RTPlot plot2(false);
+	rtplot.autoRefresh(true, 50);
+	rtplot.setGridSize(2, 2);
 
-	plot.autoRefresh(true, 20);
-	plot2.autoRefresh(true, 50);
+	for (size_t i = 0; i < 4; ++i) {
+		rtplot.setPlotName(i, "Graph #" + std::to_string(i+1));
+	}
 
-	usleep(1000000);
-
-	cout << "Sending 6 sine waves" << endl;
-
-	plot.autoXRange();
-	plot.autoYRange();
-	plot2.autoXRange();
-	plot2.autoYRange();
-
-	auto sine_wave = [] (float x, float amplitude, float freq, float offset)->float {
-		return offset + amplitude*sinf(x*freq);
-	};
+	auto sine_wave = [] (float x, float amplitude, float freq, float offset) -> float {
+						 return offset + amplitude*std::sin(x*freq);
+					 };
 
 	const int points = 10000;
 	float amplitude = 0.f;
@@ -41,10 +33,25 @@ int main(int argc, char* argv[]) {
 
 	for (size_t i = 0; i < 6; i++) {
 		std::ostringstream name;
-		name << "Sine " << setprecision(3) << freq[i] << " " << amp[i] << " " << offset[i];
-		plot.setCurveName(i, name.str());
+		name << "Sine " << std::setprecision(3) << freq[i] << " " << amp[i] << " " << offset[i];
+		rtplot.setCurveName(0, i, name.str());
+		rtplot.setXLabel(0, "Time (s)");
+		rtplot.setYLabel(0, "Amplitude");
+		rtplot.setCurveName(3, i, name.str());
+		rtplot.setXLabel(3, "Time (s)");
+		rtplot.setYLabel(3, "Amplitude");
 	}
+	rtplot.setCurveName(1, 0, "line");
+	rtplot.setCurveName(2, 0, "line");
 
+	for(size_t i=0; i<4; ++i) {
+		rtplot.autoXRange(i);
+		rtplot.autoYRange(i);
+	}
+	rtplot.setMaxPoints(0, points/5);
+	rtplot.setMaxPoints(3, points/5);
+
+	size_t total_duration = 0;
 	for (int i = 0; i < points; ++i)
 	{
 		float x;
@@ -52,23 +59,27 @@ int main(int argc, char* argv[]) {
 		i > points/2 ? amplitude -= 1.f : amplitude += 1.f;
 
 		for (size_t c = 0; c < 6; c++) {
-			plot.newPoint(c, x, sine_wave(x, amp[c], freq[c], offset[c]));
-			if(i > points/5) {
-				plot.removeFirstPoint(c);
-			}
+			rtplot.newPoint(0, c, x, sine_wave(x, amp[c], freq[c], offset[c]));
+			rtplot.newPoint(3, c, x, sine_wave(x, amp[c], freq[c], offset[c]));
 		}
 
-		plot2.newPoint(0, i, i);
+		{
+			using namespace std;
+			using namespace std::chrono;
+			high_resolution_clock::time_point t1 = high_resolution_clock::now();
+			rtplot.newPoint(1, 0, i, i);
+			high_resolution_clock::time_point t2 = high_resolution_clock::now();
+			total_duration += duration_cast<nanoseconds>( t2 - t1 ).count();
+		}
+		rtplot.newPoint(2, 0, i, i);
 
 		usleep(1000);
 	}
-	cout << "Enter something to close the plots" << endl;
-	string tmp;
-	cin >> tmp;
-	cout << "Closing RTPlot" << endl;
-	plot.quit();
-	plot2.quit();
-	cout << "Goodbye" << endl;
+
+	std::cout << "Plotting done\n";
+	std::cout << "It took " << total_duration/points << " ns in avg to add a point\n";
+
+	rtplot.run();
 
 	return 0;
 }

@@ -1,6 +1,6 @@
-#include "inputparserthread.h"
+#include <rtplot/inputparserthread.h>
 
-#include "rtplot.h"
+#include <rtplot/rtplot.h>
 
 #include <iostream>
 #include <unistd.h>
@@ -32,93 +32,94 @@ void InputParserThread::run() {
 }
 
 void InputParserThread::process() {
-	while(!stop_) {
-		if(peek_stdin(5) != 0) { // wait for 5s before checking if we have to exit or not (stop_ flag)
-			string input;
-			getline(cin, input);
-			vector<string> args;
-			istringstream iss(input);
-			ostringstream params;
-			string s;
-			while (getline(iss, s, ' '))
-				args.push_back(s);
-
-			if(args.size() == 0)
-				continue;
-
-			string cmd = args[0];
-
-			// Handle names with spaces
-			if(cmd == "xlabel") {
-				copy(args.begin()+1, args.end(), ostream_iterator<string>(params, " "));
-				mw_->setXLabel(params.str());
-			}
-			else if(cmd == "ylabel") {
-				copy(args.begin()+1, args.end(), ostream_iterator<string>(params, " "));
-				mw_->setXLabel(params.str());
-			}
-			else if(cmd == "yname") {
-				int curve;
-				if(args.size() > 2) {
-					curve = stoi(args[1]);
-				}
-				else
-					curve = -1;
-
-				copy(args.begin()+2, args.end(), ostream_iterator<string>(params, " "));
-				mw_->setCurveName(curve, params.str());
-			}
-			else {
-				switch(args.size()) {
-				case 1:
-					if(cmd == "remove_point")
-						mw_->removeFirstPoint(0);
-					else if(cmd == "refresh")
-						mw_->refresh();
-					else if(cmd == "auto_x_range")
-						mw_->autoXRange();
-					else if(cmd == "auto_y_range")
-						mw_->autoYRange();
-					else if(cmd == "quit") {
-						stop_ = true;
-						mw_->quit();
-					}
-					break;
-				case 2:
-					if(cmd == "remove_point")
-						mw_->removeFirstPoint(stoi(args[1]));
-					else if(cmd == "auto_refresh")
-						mw_->autoRefresh(args[1] == "on", 100);
-					else if(cmd == "sem_name") {
-						sem_t * mutex;
-						if ((mutex = sem_open(args[1].c_str(), O_CREAT, 0644, 0)) == SEM_FAILED) {
-							cerr << "semaphore " + args[1] + "failed to initialized" << endl;
-						}
-						else {
-							sem_post(mutex);
-						}
-					}
-					break;
-				case 3:
-					if(cmd == "plot")
-						mw_->newPoint(0, stof(args[1]), stof(args[2]));
-					else if(cmd == "auto_refresh")
-						mw_->autoRefresh(args[1] == "on", stoi(args[2]));
-					else if(cmd == "xrange")
-						mw_->setXRange(stof(args[1]), stof(args[2]));
-					else if(cmd == "yrange")
-						mw_->setYRange(stof(args[1]), stof(args[2]));
-					break;
-				case 4:
-					if(cmd == "plot")
-						mw_->newPoint(stoi(args[1]), stof(args[2]), stof(args[3]));
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
+	// TODO update
+	// while(!stop_) {
+	//  if(peek_stdin(5) != 0) { // wait for 5s before checking if we have to exit or not (stop_ flag)
+	//      string input;
+	//      getline(cin, input);
+	//      vector<string> args;
+	//      istringstream iss(input);
+	//      ostringstream params;
+	//      string s;
+	//      while (getline(iss, s, ' '))
+	//          args.push_back(s);
+	//
+	//      if(args.size() == 0)
+	//          continue;
+	//
+	//      string cmd = args[0];
+	//
+	//      // Handle names with spaces
+	//      if(cmd == "xlabel") {
+	//          copy(args.begin()+1, args.end(), ostream_iterator<string>(params, " "));
+	//          mw_->setXLabel(params.str());
+	//      }
+	//      else if(cmd == "ylabel") {
+	//          copy(args.begin()+1, args.end(), ostream_iterator<string>(params, " "));
+	//          mw_->setXLabel(params.str());
+	//      }
+	//      else if(cmd == "yname") {
+	//          int curve;
+	//          if(args.size() > 2) {
+	//              curve = stoi(args[1]);
+	//          }
+	//          else
+	//              curve = -1;
+	//
+	//          copy(args.begin()+2, args.end(), ostream_iterator<string>(params, " "));
+	//          mw_->setCurveName(curve, params.str());
+	//      }
+	//      else {
+	//          switch(args.size()) {
+	//          case 1:
+	//              if(cmd == "remove_point")
+	//                  mw_->removeFirstPoint(0);
+	//              else if(cmd == "refresh")
+	//                  mw_->refresh();
+	//              else if(cmd == "auto_x_range")
+	//                  mw_->autoXRange();
+	//              else if(cmd == "auto_y_range")
+	//                  mw_->autoYRange();
+	//              else if(cmd == "quit") {
+	//                  stop_ = true;
+	//                  mw_->quit();
+	//              }
+	//              break;
+	//          case 2:
+	//              if(cmd == "remove_point")
+	//                  mw_->removeFirstPoint(stoi(args[1]));
+	//              else if(cmd == "auto_refresh")
+	//                  mw_->autoRefresh(args[1] == "on", 100);
+	//              else if(cmd == "sem_name") {
+	//                  sem_t * mutex;
+	//                  if ((mutex = sem_open(args[1].c_str(), O_CREAT, 0644, 0)) == SEM_FAILED) {
+	//                      cerr << "semaphore " + args[1] + "failed to initialized" << endl;
+	//                  }
+	//                  else {
+	//                      sem_post(mutex);
+	//                  }
+	//              }
+	//              break;
+	//          case 3:
+	//              if(cmd == "plot")
+	//                  mw_->newPoint(0, stof(args[1]), stof(args[2]));
+	//              else if(cmd == "auto_refresh")
+	//                  mw_->autoRefresh(args[1] == "on", stoi(args[2]));
+	//              else if(cmd == "xrange")
+	//                  mw_->setXRange(stof(args[1]), stof(args[2]));
+	//              else if(cmd == "yrange")
+	//                  mw_->setYRange(stof(args[1]), stof(args[2]));
+	//              break;
+	//          case 4:
+	//              if(cmd == "plot")
+	//                  mw_->newPoint(stoi(args[1]), stof(args[2]), stof(args[3]));
+	//              break;
+	//          default:
+	//              break;
+	//          }
+	//      }
+	//  }
+	// }
 }
 
 int InputParserThread::peek_stdin(unsigned int secs) {

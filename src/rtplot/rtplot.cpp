@@ -1,9 +1,9 @@
-#include "rtplot.h"
+#include <rtplot/rtplot.h>
+#include <rtplot/Fl_Plot.H>
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-
-#include "Fl_plot.H"
+#include "rtplot_window.h"
+#include "rtplot_layout.h"
 
 #include <X11/Xlib.h>
 
@@ -11,8 +11,9 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <cassert>
 
-#include "inputparserthread.h"
+#include <rtplot/inputparserthread.h>
 
 using namespace std;
 
@@ -23,30 +24,30 @@ mutex auto_refresh_mtx;
 
 struct RTPlot::rtplot_members {
 	rtplot_members() :
-		window_(nullptr),
-		parser_(nullptr),
 		auto_refresh_period_(0),
-		plot_(nullptr),
-		auto_x_range(true),
-		auto_y_range(true)
+		grid_rows(1),
+		grid_cols(1)
 	{
 	}
 
-	Fl_Window* window_;
+	~rtplot_members() {
 
-	InputParserThread* parser_;
+	}
+
+	std::unique_ptr<RTPlotWindow> window_;
+	std::unique_ptr<RTPlotLayout> layout_;
+	std::unique_ptr<InputParserThread> parser_;
+	std::vector<std::shared_ptr<Fl_Plot>> plots_;
+
 	std::thread auto_refresh_thread_;
 	std::mutex auto_refresh_period_lock_;
-	unsigned int auto_refresh_period_;
-	Fl_Plot* plot_;
-	bool auto_x_range, auto_y_range;
-	uint color_index;
+	size_t auto_refresh_period_;
+	size_t grid_rows;
+	size_t grid_cols;
 };
 
-const int _plot_x_offset = 70;
-const int _plot_y_offset = 15;
-const int _plot_x_size = 555;
-const int _plot_y_size = 380;
+constexpr int _plot_width = 655;
+constexpr int _plot_height = 450;
 
 RTPlot::RTPlot(bool start_stdin_parser) : impl_(nullptr)
 {
@@ -60,12 +61,8 @@ RTPlot::RTPlot(int argc, char* argv[], bool start_stdin_parser) : impl_(nullptr)
 	impl_->window_->show(argc, argv);
 }
 
-RTPlot::~RTPlot()
-{
-	if(impl_ != nullptr) {
-		delete impl_;
-		impl_ = nullptr;
-	}
+RTPlot::~RTPlot() {
+	quit();
 }
 
 void RTPlot::create(bool start_stdin_parser) {
@@ -75,58 +72,94 @@ void RTPlot::create(bool start_stdin_parser) {
 		thread_init_done = true;
 	}
 
-	impl_ = new rtplot_members;
+	impl_ = std::make_unique<RTPlot::rtplot_members>();
 
-	impl_->window_ = new Fl_Window(655, 450, "RTPlot");
+	impl_->window_ = std::make_unique<RTPlotWindow>(_plot_width, _plot_height, "RTPlot");
 
 	if(start_stdin_parser) {
-		impl_->parser_ = new InputParserThread(this);
+		impl_->parser_ = std::make_unique<InputParserThread>(this);
 		impl_->parser_->run();
 	}
 
-	impl_->plot_ = new Fl_Plot(_plot_x_offset, _plot_y_offset, _plot_x_size, _plot_y_size, "plot");
+	impl_->layout_ = std::make_unique<RTPlotLayout>(0, 0, _plot_width, _plot_height, "RTPlot layout");
 
 	impl_->window_->end();
 
 	Fl::scheme("plastic"); // Better looking GUI
 
-	impl_->window_->size_range(655, 450, 0, 0, 0, 0, 1);
+	impl_->window_->resizable(*impl_->layout_);
+
+	// This makes sure you can use Xdbe on servers where double buffering does not exist for every visual
+	Fl::visual(FL_DOUBLE|FL_INDEX);
+}
+
+void RTPlot::checkPlot(size_t plot) {
+	assert(plot < impl_->grid_rows*impl_->grid_cols);
+	if(not static_cast<bool>(impl_->plots_[plot])) {
+		impl_->plots_[plot] = std::make_shared<Fl_Plot>();
+		updateLayout();
+	}
+}
+
+void RTPlot::updateLayout() {
+	impl_->layout_->setSize(impl_->plots_, impl_->grid_rows, impl_->grid_cols);
+	refresh();
+}
+
+void RTPlot::setGridSize(size_t rows, size_t cols) {
+	assert((rows > 1) and (cols > 1));
+	impl_->grid_rows = rows;
+	impl_->grid_cols = cols;
+	impl_->plots_.resize(rows*cols);
+	impl_->window_->size_range(cols*_plot_width, rows*_plot_height, 0, 0, 0, 0, 1);
+	updateLayout();
 }
 
 void RTPlot::quit() {
-	if(impl_->parser_ != nullptr)
+	if(impl_->parser_)
 		impl_->parser_->stop();
 	autoRefresh(false);
 	impl_->window_->hide();
 	refresh();
 }
 
-void RTPlot::newPoint(int curve, float x, float y) {
-	impl_->plot_->addPoint(curve, x, y);
+void RTPlot::newPoint(size_t plot, int curve, float x, float y) {
+	checkPlot(plot);
+	impl_->plots_[plot]->addPoint(curve, x, y);
 }
 
-void RTPlot::removeFirstPoint(int curve) {
-	impl_->plot_->removeFirstPoint(curve);
+void RTPlot::removeFirstPoint(size_t plot, int curve) {
+	checkPlot(plot);
+	impl_->plots_[plot]->removeFirstPoint(curve);
 }
 
-void RTPlot::setXLabel(const std::string& name) {
-	impl_->plot_->setXLabel(name);
+void RTPlot::setXLabel(size_t plot, const std::string& name) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setXLabel(name);
 	refresh();
 }
 
-void RTPlot::setYLabel(const std::string& name) {
-	impl_->plot_->setYLabel(name);
+void RTPlot::setYLabel(size_t plot, const std::string& name) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setYLabel(name);
 	refresh();
 }
 
-void RTPlot::setCurveName(int curve, const std::string& name) {
-	impl_->plot_->setCurveLabel(curve, name);
+void RTPlot::setCurveName(size_t plot, int curve, const std::string& name) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setCurveLabel(curve, name);
+	refresh();
+}
+
+void RTPlot::setPlotName(size_t plot, const std::string& name) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setPlotName(name);
 	refresh();
 }
 
 void RTPlot::refresh() {
-	impl_->plot_->refresh();
 	impl_->window_->redraw();
+	Fl::check();
 }
 
 void RTPlot::autoRefresh(bool enable, uint period_ms) {
@@ -136,17 +169,17 @@ void RTPlot::autoRefresh(bool enable, uint period_ms) {
 
 		if(create_thread) {
 			impl_->auto_refresh_thread_ = thread(
-			    [this]() {
-			        while(impl_->auto_refresh_period_) {
-			            /* Using Fl::lock() blocks everything but a standard mutex seems to do the job */
-			            // Fl::lock();
-			            auto_refresh_mtx.lock();
-			            this->refresh();
-			            auto_refresh_mtx.unlock();
-			            // Fl::unlock();
-			            this_thread::sleep_for(std::chrono::milliseconds(impl_->auto_refresh_period_));
-					}
-				});
+				[this]() {
+				while(impl_->auto_refresh_period_) {
+				    /* Using Fl::lock() blocks everything but a standard mutex seems to do the job */
+				    // Fl::lock();
+				    auto_refresh_mtx.lock();
+				    this->refresh();
+				    auto_refresh_mtx.unlock();
+				    // Fl::unlock();
+				    this_thread::sleep_for(std::chrono::milliseconds(impl_->auto_refresh_period_));
+				}
+			});
 		}
 	}
 	else {
@@ -157,22 +190,40 @@ void RTPlot::autoRefresh(bool enable, uint period_ms) {
 	}
 }
 
-void RTPlot::setXRange(float min, float max) {
-	impl_->plot_->setXRange(min, max);
+void RTPlot::setXRange(size_t plot, float min, float max) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setXRange(min, max);
 	refresh();
 }
 
-void RTPlot::setYRange(float min, float max) {
-	impl_->plot_->setYRange(min, max);
+void RTPlot::setYRange(size_t plot, float min, float max) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setYRange(min, max);
 	refresh();
 }
 
-void RTPlot::autoXRange() {
-	impl_->plot_->setAutoXRange();
+void RTPlot::autoXRange(size_t plot) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setAutoXRange();
 	refresh();
 }
 
-void RTPlot::autoYRange() {
-	impl_->plot_->setAutoYRange();
+void RTPlot::autoYRange(size_t plot) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setAutoYRange();
 	refresh();
+}
+
+void RTPlot::setMaxPoints(size_t plot, size_t count) {
+	checkPlot(plot);
+	impl_->plots_[plot]->setMaxPoints(count);
+	refresh();
+}
+
+void RTPlot::run() {
+	Fl::run();
+}
+
+void RTPlot::check() {
+	Fl::check();
 }

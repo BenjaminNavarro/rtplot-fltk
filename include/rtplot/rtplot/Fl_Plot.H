@@ -10,16 +10,17 @@
 
 #include <utility>
 #include <map>
-#include <list>
+#include <deque>
 #include <vector>
 #include <mutex>
 #include <set>
+#include <limits>
 
 class Fl_Plot : virtual public Fl_Widget {
 public:
 	typedef std::pair<float,float> Paird;
 	typedef Paird PointXY;
-	Fl_Plot(int x, int y, int w, int h, const char *label = 0);
+	Fl_Plot(int x = 0, int y = 0, int w = 0, int h = 0, const char *label = 0);
 
 	void refresh();
 
@@ -34,9 +35,12 @@ public:
 	void setYRange(float min, float max);
 	void setXLabel(const std::string& label);
 	void setYLabel(const std::string& label);
+	void setPlotName(const std::string& name);
 	void setCurveLabel(int curve, const std::string& label);
 	void setAutoXRange();
 	void setAutoYRange();
+	void setMaxPoints(int curve, size_t count);
+	void setMaxPoints(size_t count);
 
 	static void display_labels_btn_clb(Fl_Widget *w, void *obj);
 
@@ -47,7 +51,6 @@ protected:
 private:
 
 	void drawAxes();
-	void drawBackground();
 	void drawLabels();
 	void initScaleToPlot();
 	void scaleToPlot(const PointXY& in_point, PointXY& out_point);
@@ -56,10 +59,19 @@ private:
 	void drawXTickValue(float num, const PointXY& point);
 	void drawYTickValue(float num, const PointXY& point);
 
-	std::map<int, std::list<PointXY> > curves_;
-	std::map<int, std::pair<std::multiset<float>, std::multiset<float> > > ordered_lists_;
-	std::map<int, std::string> labels_;
-	std::mutex curves_lock_;
+	struct CurveData {
+		CurveData() :
+			max_points(std::numeric_limits<size_t>::max())
+		{
+		}
+
+		std::deque<PointXY> points;
+		std::pair<std::multiset<float>, std::multiset<float>> ordered_list;
+		std::string label;
+		size_t max_points;
+		std::mutex lock_;
+	};
+	std::map<int, CurveData> curves_data_;
 	std::vector<Fl_Color> palette_;
 	Paird xrange_;
 	Paird yrange_;
@@ -69,12 +81,11 @@ private:
 	std::pair<int, int> ybounds_;
 	PointXY plot_offset_;
 	Paird plot_size_;
-	Paird init_plot_size_;
-	Paird plot_margins_;
 	int label_area_width_;
 	int subdivisions_;
 	std::string xlabel_;
 	std::string ylabel_;
+	std::string plot_name_;
 	std::pair<size_t, size_t> last_cursor_position_;
 	bool auto_xrange_;
 	bool auto_yrange_;
