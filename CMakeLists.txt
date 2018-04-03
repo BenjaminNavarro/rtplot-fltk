@@ -18,7 +18,7 @@ declare_PID_Package(
 
 
 add_PID_Package_Author(AUTHOR Robin Passama INSTITUTION LIRMM) #debugging and adapting to PID API changes
-set_PID_Package_Version(1 0 0)
+set_PID_Package_Version(1 1 0)
 
 #now finding packages
 declare_PID_Package_Dependency(PACKAGE rtplot-core NATIVE VERSION 0.1)
