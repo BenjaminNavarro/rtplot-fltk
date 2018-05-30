@@ -38,7 +38,6 @@ protected:
 	virtual void setLineStyle(LineStyle style) override;
 	virtual void drawText(const std::string& text, const PointXY& position, int angle = 0) override;
 	virtual Pairf measureText(const std::string& text) override;
-	virtual void setColor(size_t palette_idx) override;
 	virtual void setColor(Colors color) override;
 	virtual void saveColor() override;
 	virtual void restoreColor() override;

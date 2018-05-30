@@ -14,22 +14,6 @@
 using namespace rtp;
 
 Fl_Plot::Fl_Plot(int x, int y, int w, int h, const char *label) : Fl_Widget(x,y,w,h,label) {
-	palette_ = {
-		FL_BLACK,
-		FL_RED,
-		FL_GREEN,
-		FL_YELLOW,
-		FL_BLUE,
-		FL_MAGENTA,
-		FL_CYAN,
-		FL_DARK_RED,
-		FL_DARK_GREEN,
-		FL_DARK_YELLOW,
-		FL_DARK_BLUE,
-		FL_DARK_MAGENTA,
-		FL_DARK_CYAN
-	};
-
 	saved_color_ = FL_BLACK;
 
 	display_labels_btn_ = new Fl_Button(0, 0, 0, 0, getToggleButtonText().c_str());
@@ -152,10 +136,6 @@ RTPlotCore::Pairf Fl_Plot::measureText(const std::string& text) {
 	return Pairf{textw, texth};
 }
 
-void Fl_Plot::setColor(size_t palette_idx) {
-	fl_color(palette_[palette_idx]);
-}
-
 void Fl_Plot::setColor(RTPlotCore::Colors color) {
 	switch(color) {
 	case Colors::Black:
@@ -166,6 +146,42 @@ void Fl_Plot::setColor(RTPlotCore::Colors color) {
 		break;
 	case Colors::Gray:
 		fl_color(200,200,200);
+		break;
+	case Colors::Red:
+		fl_color(FL_RED);
+		break;
+	case Colors::Green:
+		fl_color(FL_GREEN);
+		break;
+	case Colors::Yellow:
+		fl_color(FL_YELLOW);
+		break;
+	case Colors::Blue:
+		fl_color(FL_BLUE);
+		break;
+	case Colors::Magenta:
+		fl_color(FL_MAGENTA);
+		break;
+	case Colors::Cyan:
+		fl_color(FL_CYAN);
+		break;
+	case Colors::DarkRed:
+		fl_color(FL_DARK_RED);
+		break;
+	case Colors::DarkGreen:
+		fl_color(FL_DARK_GREEN);
+		break;
+	case Colors::DarkYellow:
+		fl_color(FL_DARK_YELLOW);
+		break;
+	case Colors::DarkBlue:
+		fl_color(FL_DARK_BLUE);
+		break;
+	case Colors::DarkMagenta:
+		fl_color(FL_DARK_MAGENTA);
+		break;
+	case Colors::DarkCyan:
+		fl_color(FL_DARK_CYAN);
 		break;
 	}
 }
