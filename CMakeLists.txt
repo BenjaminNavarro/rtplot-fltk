@@ -14,7 +14,7 @@ PID_Package(
 			YEAR 			2018
 			LICENSE 		CeCILL
 			DESCRIPTION 	"Real time plotting library and application based on FLTK"
-            VERSION         1.1.0
+            VERSION         1.2.0
 		)
 
 
