@@ -20,8 +20,7 @@ PID_Package(
 
 add_PID_Package_Author(AUTHOR Robin Passama INSTITUTION LIRMM) #debugging and adapting to PID API changes
 
-#now finding packages
 PID_Dependency(rtplot-core VERSION 0.1)
-PID_Dependency(fltk-gui VERSION 0.4.3)
+PID_Dependency(fltk-gui VERSION 0.4.4)
 
 build_PID_Package()

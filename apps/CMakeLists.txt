@@ -13,16 +13,8 @@
 # 	NATIVE      fltk
 # 	PACKAGE     fltk-gui)
 
-declare_PID_Component(
-	EXAMPLE_APPLICATION
+PID_Component(
+	EXAMPLE
 	NAME rtplot-test
-	DIRECTORY test_rtplot)
-
-declare_PID_Component_Dependency(
-	COMPONENT rtplot-test
-	NATIVE rtplot-lib)
-
-declare_PID_Component_Dependency(
-	COMPONENT  rtplot-test
-	NATIVE      fltk
-	PACKAGE     fltk-gui)
+	DIRECTORY test_rtplot
+    DEPEND rtplot-lib)

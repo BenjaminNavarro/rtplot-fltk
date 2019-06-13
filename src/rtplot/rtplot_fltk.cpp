@@ -8,12 +8,10 @@
 
 #include <X11/Xlib.h>
 
-using namespace std;
 using namespace rtp;
 
 namespace {
 bool thread_init_done = false;
-mutex auto_refresh_mtx;
 }
 
 
@@ -40,7 +38,7 @@ void RTPlotFLTK::create() {
 
 	window->end();
 
-	Fl::scheme("plastic"); // Better looking GUI
+	Fl::scheme("gtk+"); // Better looking GUI (changed from "plastic" because of background color issues)
 
 	window->resizable(layout);
 
