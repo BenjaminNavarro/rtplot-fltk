@@ -54,6 +54,19 @@ int Fl_Plot::handle(int event) {
 	case FL_MOVE:
 		event_type = MouseEvent::MoveInsideWidget;
 		break;
+	case FL_PUSH:
+		switch(Fl::event_button()) {
+			case FL_LEFT_MOUSE:
+				event_type = MouseEvent::LeftClick;
+				break;
+			case FL_MIDDLE_MOUSE:
+				event_type = MouseEvent::MiddleClick;
+				break;
+			case FL_RIGHT_MOUSE:
+				event_type = MouseEvent::RightClick;
+				break;
+		}
+		break;
 	default:
 		event_type = MouseEvent::Unknown;
 		ret_code = 0;
