@@ -136,7 +136,7 @@ RTPlotCore::Pairf Fl_Plot::measureText(const std::string& text) {
 	return Pairf{textw, texth};
 }
 
-void Fl_Plot::setColor(RTPlotCore::Colors color) {
+void Fl_Plot::setColor(Colors color) {
 	switch(color) {
 	case Colors::Black:
 		fl_color(FL_BLACK);
