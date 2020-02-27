@@ -14,51 +14,52 @@ namespace {
 bool thread_init_done = false;
 }
 
-
-RTPlotFLTK::RTPlotFLTK() :
-	RTPlot()
-{
-	init();
+RTPlotFLTK::RTPlotFLTK() : RTPlot() {
+    init();
 }
 
 RTPlotFLTK::~RTPlotFLTK() = default;
 
 void RTPlotFLTK::create() {
-	if(not thread_init_done) {
-		Fl::lock();
-		XInitThreads();
-		thread_init_done = true;
-	}
+    if (not thread_init_done) {
+        Fl::lock();
+        XInitThreads();
+        thread_init_done = true;
+    }
 
-	impl_->window_ = std::make_unique<RTPlotFLTKWindow>(getPlotWidth(), getPlotHeight(), "RTPlot");
-	auto window = dynamic_cast<RTPlotFLTKWindow*>(impl_->window_.get());
+    impl_->window_ = std::make_unique<RTPlotFLTKWindow>(
+        getPlotWidth(), getPlotHeight(), "RTPlot");
+    auto window = dynamic_cast<RTPlotFLTKWindow*>(impl_->window_.get());
 
-	impl_->layout_ = std::make_unique<RTPlotFLTKLayout>(0, 0, getPlotWidth(), getPlotHeight(), "RTPlot layout");
-	auto layout = dynamic_cast<RTPlotFLTKLayout*>(impl_->layout_.get());
+    impl_->layout_ = std::make_unique<RTPlotFLTKLayout>(
+        0, 0, getPlotWidth(), getPlotHeight(), "RTPlot layout");
+    auto layout = dynamic_cast<RTPlotFLTKLayout*>(impl_->layout_.get());
 
-	window->end();
+    window->end();
 
-	Fl::scheme("gtk+"); // Better looking GUI (changed from "plastic" because of background color issues)
+    Fl::scheme("gtk+"); // Better looking GUI (changed from "plastic" because of
+                        // background color issues)
 
-	window->resizable(layout);
+    window->resizable(layout);
 
-	// This makes sure you can use Xdbe on servers where double buffering does not exist for every visual
-	Fl::visual(FL_DOUBLE|FL_INDEX);
+    // This makes sure you can use Xdbe on servers where double buffering does
+    // not exist for every visual
+    Fl::visual(FL_DOUBLE | FL_INDEX);
 }
 
 void RTPlotFLTK::refresh() {
-	impl_->window_->redraw();
-	Fl::check();
+    impl_->window_->redraw();
+    Fl::check();
 }
 
 void RTPlotFLTK::run() {
-	Fl::run();
+    Fl::run();
 }
 
 bool RTPlotFLTK::check() {
-	return Fl::check();
+    return Fl::check();
 }
 
 std::shared_ptr<RTPlotCore> RTPlotFLTK::makePlot() {
-	return std::make_shared<Fl_Plot>();
+    return std::make_shared<Fl_Plot>();
 }

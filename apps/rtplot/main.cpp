@@ -2,11 +2,10 @@
 
 #include <FL/Fl.H>
 
-int main(int argc, char *argv[])
-{
-	RTPlot plot(true);
+int main(int argc, char* argv[]) {
+    RTPlot plot(true);
 
-	Fl::run();
+    Fl::run();
 
-	return 0;
+    return 0;
 }

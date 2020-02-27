@@ -7,18 +7,19 @@
 
 namespace rtp {
 
-class RTPlotFLTKWindow : virtual public Fl_Double_Window, virtual public RTPlotWindow {
+class RTPlotFLTKWindow : virtual public Fl_Double_Window,
+                         virtual public RTPlotWindow {
 public:
-	RTPlotFLTKWindow(int width, int height, const char* name);
-	~RTPlotFLTKWindow();
+    RTPlotFLTKWindow(int width, int height, const char* name);
+    ~RTPlotFLTKWindow();
 
-	virtual void show() override;
-	virtual void hide() override;
-	virtual void setMinimumSize(size_t width, size_t height) override;
-	virtual void redraw() override;
+    virtual void show() override;
+    virtual void hide() override;
+    virtual void setMinimumSize(size_t width, size_t height) override;
+    virtual void redraw() override;
 
 protected:
-	virtual void draw() override;
+    virtual void draw() override;
 };
 
-}
+} // namespace rtp
