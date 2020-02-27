@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <thread>
 #include <unistd.h>
 
 int main(int argc, char const* argv[]) {
@@ -16,6 +17,8 @@ int main(int argc, char const* argv[]) {
     for (size_t i = 0; i < 4; ++i) {
         rtplot.setPlotName(i, "Graph #" + std::to_string(i + 1));
     }
+
+    rtplot.enableFastPlotting();
 
     auto sine_wave = [](float x, float amplitude, float freq,
                         float offset) -> float {
@@ -51,6 +54,9 @@ int main(int argc, char const* argv[]) {
 
     size_t total_duration = 0;
     for (int i = 0; i < points; ++i) {
+        using namespace std::chrono;
+
+        auto t_start = high_resolution_clock::now();
         float x;
         x = i / 10.f;
         i > points / 2 ? amplitude -= 1.f : amplitude += 1.f;
@@ -75,7 +81,7 @@ int main(int argc, char const* argv[]) {
                               14; // 14 points per loop
         }
 
-        usleep(1000);
+        std::this_thread::sleep_until(t_start + milliseconds(1));
     }
 
     std::cout << "Plotting done\n";
