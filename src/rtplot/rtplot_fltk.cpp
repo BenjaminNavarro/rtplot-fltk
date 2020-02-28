@@ -47,7 +47,7 @@ void RTPlotFLTK::create() {
     Fl::visual(FL_DOUBLE | FL_INDEX);
 }
 
-void RTPlotFLTK::refresh() {
+void RTPlotFLTK::redraw() {
     impl_->window_->redraw();
     Fl::check();
 }
