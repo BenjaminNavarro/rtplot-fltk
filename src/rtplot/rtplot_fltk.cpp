@@ -18,7 +18,9 @@ RTPlotFLTK::RTPlotFLTK() : RTPlot() {
     init();
 }
 
-RTPlotFLTK::~RTPlotFLTK() = default;
+RTPlotFLTK::~RTPlotFLTK() {
+    disableAutoRefresh();
+};
 
 void RTPlotFLTK::create() {
     if (not thread_init_done) {
